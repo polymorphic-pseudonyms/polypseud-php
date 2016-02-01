@@ -9,6 +9,7 @@
 
 static zend_function_entry polypseud_php_functions[] = {
     PHP_FE(polypseud_decrypt, NULL)
+    PHP_FE(polypseud_generate_pp, NULL)
     {NULL, NULL, NULL}
 };
 
@@ -33,8 +34,7 @@ zend_module_entry polypseud_php_module_entry = {
 ZEND_GET_MODULE(polypseud_php)
 #endif
 
-PHP_FUNCTION(polypseud_decrypt)
-{
+PHP_FUNCTION(polypseud_decrypt) {
     const char *ep, *privkey, *closingkey;
     int ep_len, privkey_len, closingkey_len;
 
@@ -42,7 +42,20 @@ PHP_FUNCTION(polypseud_decrypt)
         RETURN_NULL();
     }
 
-    char* pp = decrypt_ep(ep, privkey, closingkey);
+    char *fp = polypseud_decrypt_ep(ep, privkey, closingkey);
 
-    RETURN_STRING(pp, 1);
+    RETURN_STRING(fp, 1);
+}
+
+PHP_FUNCTION(polypseud_generate_pp) {
+   char *yK, *uid;
+   int yK_len, uid_len;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss", &yK, &yK_len, &uid, &uid_len) == FAILURE) {
+       RETURN_NULL();
+   }
+
+   char *pp = polypseud_generate_pp(yK, uid);
+
+   RETURN_STRING(pp, 1);
 }
