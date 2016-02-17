@@ -10,6 +10,8 @@
 static zend_function_entry polypseud_php_functions[] = {
     PHP_FE(polypseud_decrypt, NULL)
     PHP_FE(polypseud_generate_pp, NULL)
+    PHP_FE(polypseud_specialize, NULL)
+    PHP_FE(polypseud_randomize, NULL)
     {NULL, NULL, NULL}
 };
 
@@ -35,7 +37,7 @@ ZEND_GET_MODULE(polypseud_php)
 #endif
 
 PHP_FUNCTION(polypseud_decrypt) {
-    const char *ep, *privkey, *closingkey;
+    char *ep, *privkey, *closingkey;
     int ep_len, privkey_len, closingkey_len;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss", &ep, &ep_len, &privkey, &privkey_len, &closingkey, &closingkey_len) == FAILURE) {
@@ -59,3 +61,30 @@ PHP_FUNCTION(polypseud_generate_pp) {
 
    RETURN_STRING(pp, 1);
 }
+
+PHP_FUNCTION(polypseud_specialize) {
+    char *pp, *spid, *dp, *dk;
+    int pp_len, spid_len, dp_len, dk_len;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ssss", &pp, &pp_len, &spid, &spid_len, &dp, &dp_len, &dk, &dk_len) == FAILURE) {
+        RETURN_NULL();
+    }
+
+    char *ep = polypseud_specialize_pp(pp, spid, dp, dk);
+
+    RETURN_STRING(ep, 1);
+}
+
+PHP_FUNCTION(polypseud_randomize) {
+   char *pseud;
+   int pseud_len;
+
+   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &pseud, &pseud_len) == FAILURE) {
+       RETURN_NULL();
+   }
+
+   char *randomized = polypseud_randomize_enc(pseud);
+
+   RETURN_STRING(randomized, 1);
+}
+

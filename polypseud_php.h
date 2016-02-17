@@ -6,6 +6,8 @@
 
 PHP_FUNCTION(polypseud_decrypt);
 PHP_FUNCTION(polypseud_generate_pp);
+PHP_FUNCTION(polypseud_specialize);
+PHP_FUNCTION(polypseud_randomize);
 
 extern zend_module_entry polypseud_php_module_entry;
 #define phpext_polypseud_php_ptr &polypseud_php_module_entry
